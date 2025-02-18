@@ -1,5 +1,6 @@
 import fs from 'fs-extra'
-import path from 'path'
+import matter from 'gray-matter'
+import path from 'node:path'
 import {
   SitemapStream,
   type EnumChangefreq,
@@ -17,11 +18,18 @@ export async function generateSitemap(siteConfig: SiteConfig) {
   const getLastmod = async (url: string) => {
     if (!siteConfig.lastUpdated) return undefined
 
-    let path = url.replace(/(^|\/)$/, '$1index')
-    path = path.replace(/(\.html)?$/, '.md')
-    path = siteConfig.rewrites.inv[path] || path
+    let file = url.replace(/(^|\/)$/, '$1index')
+    file = file.replace(/(\.html)?$/, '.md')
+    file = siteConfig.rewrites.inv[file] || file
+    file = path.join(siteConfig.srcDir, file)
 
-    return (await getGitTimestamp(path)) || undefined
+    if (!fs.existsSync(file)) return undefined
+
+    const { data } = matter.read(file)
+    if (data.lastUpdated === false) return undefined
+    if (data.lastUpdated instanceof Date) return +data.lastUpdated
+
+    return (await getGitTimestamp(file)) || undefined
   }
 
   await task('generating sitemap', async () => {

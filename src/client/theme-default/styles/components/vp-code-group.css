@@ -23,7 +23,7 @@
 }
 
 .vp-code-group .tabs input {
-  position: absolute;
+  position: fixed;
   opacity: 0;
   pointer-events: none;
 }
@@ -48,7 +48,8 @@
   bottom: -1px;
   left: 8px;
   z-index: 1;
-  height: 1px;
+  height: 2px;
+  border-radius: 2px;
   content: '';
   background-color: transparent;
   transition: background-color 0.25s;
@@ -66,13 +67,19 @@
   background-color: var(--vp-code-tab-active-bar-color);
 }
 
-.vp-code-group div[class*='language-'] {
+.vp-code-group div[class*='language-'],
+.vp-block {
   display: none;
   margin-top: 0 !important;
   border-top-left-radius: 0 !important;
   border-top-right-radius: 0 !important;
 }
 
-.vp-code-group div[class*='language-'].active {
+.vp-code-group div[class*='language-'].active,
+.vp-block.active {
   display: block;
+}
+
+.vp-block {
+  padding: 20px 24px;
 }
